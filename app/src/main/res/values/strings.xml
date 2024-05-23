@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Mosque Localization Application</string>
+    <string name="reg_btn">Submit</string>
 </resources>

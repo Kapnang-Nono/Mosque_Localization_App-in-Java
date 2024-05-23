@@ -4,48 +4,59 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-    // we can also make MainActivity class extends AppCompactActivity
-    // (which is the recommended way
+     private EditText username, password;
+     private Button signin, signup;
+     private DatabaseHelper dbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView errorId = findViewById(R.id.error);
-        errorId.setVisibility(View.GONE);
+
+        username = (EditText) findViewById(R.id.user_name);
+        password = (EditText) findViewById(R.id.user_password);
+        signin = (Button) findViewById(R.id.login_btn);
+        signup = (Button) findViewById(R.id.reg_btn);
+        dbHelper = new DatabaseHelper(this);
+
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, RegistrationActivity.class);
+                startActivity(i);
+            }
+        });
+
+        signin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              handleUserAuthentication();
+            }
+        });
+
     }
 
-    public void launchRegistrationActivity(View v){
-        Intent intent = new Intent(this, RegistrationActivity.class);
-        startActivity(intent);
-    }
+    public void handleUserAuthentication(){
+        String user = username.getText().toString().trim();
+        String pass = password.getText().toString().trim();
 
-    public void handleLogin(View v){
-        TextView nameId = findViewById(R.id.user_name);
-        TextView passId = findViewById(R.id.user_password);
-        TextView errorId = findViewById(R.id.error);
-
-        String name = nameId.getText().toString();
-        String pass = passId.getText().toString();
-
-        if(name.length() == 0 || pass.length() == 0){
-            errorId.setVisibility(View.VISIBLE);
-            errorId.setText("Sorry empty fields are not allowed");
-            Toast.makeText(this, "re-rendering Login", Toast.LENGTH_LONG).show();
-            Intent i = new Intent(this, MainActivity.class);
-            // startActivity(i);
+        if(user.equals("") || pass.equals("")){
+            Toast.makeText(this, "Please enter all the fields", Toast.LENGTH_SHORT).show();
+        }else{
+            Boolean checkUserPass = dbHelper.checkUsernamePassword(user, pass);
+            if(checkUserPass == true){
+                Toast.makeText(this, "Login successfull", Toast.LENGTH_SHORT).show();
+                Intent myIntent = new Intent(this, Main.class);
+                startActivity(myIntent);
+            }else{
+                Toast.makeText(this, "Invalid credentials! Try again", Toast.LENGTH_SHORT).show();
+            }
         }
-        if(name.length() != 0 && pass.length() != 0){
-            Intent i = new Intent(this, Main.class);
-            startActivity(i);
-            nameId.setText("");
-            passId.setText("");
-            errorId.setText("");
-        }
-
     }
 }
