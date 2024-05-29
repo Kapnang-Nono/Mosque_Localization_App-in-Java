@@ -4,8 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -19,6 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
        db.execSQL("create table users(username TEXT primary key, password TEXT)");
        db.execSQL("create table mosques(mosqueName TEXT primary key, address TEXT, prayerTime TEXT, longitude double, latitude double)");
+       db.execSQL("insert into mosques values('El-adj', 'Ekounou', '15:00 pm', 234.890, 123.90), ('Mosque2', 'Awea-Eskalier', '18:00 pm', 23.78, 89.45)");
     }
 
     @Override
@@ -40,38 +45,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Boolean insertMosque(String mosqueName, String address, String prayerTime, double lon, double lat){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("mosquename", mosqueName);
-        values.put("address", address);
-        values.put("prayerTime", prayerTime);
-        values.put("longitude", lon);
-        values.put("latitude", lat);
-        long ressult = db.insert("mosques", null, values);
-        if(ressult == -1){
-            return false;
-        }else{
-            return true;
-        }
-    }
-
     @SuppressLint("Range")
-    public String[] getMosqueByName(String mosqueName){
-        SQLiteDatabase db = this.getWritableDatabase();
+    public List<Mosque> getMosqueByName(String mosqueName){
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from mosques where mosqueName = ?", new String[] {mosqueName});
-        if(cursor.getCount() > 0){
-            if(cursor.moveToFirst()){
-                do{
-                   String address = cursor.getColumnName(cursor.getColumnIndex("address"));
-                    String prayerTime = cursor.getColumnName(cursor.getColumnIndex("prayerTime"));
-                    String longitude = cursor.getColumnName(cursor.getColumnIndex("longitute"));
-                    String latitude = cursor.getColumnName(cursor.getColumnIndex("latitude"));
+        DatabaseUtils.dumpCursorToString(cursor);
+        List<Mosque> dataList = new ArrayList<>();
+        while(cursor.moveToNext()){
+            String mosque_name = cursor.getString(cursor.getColumnIndex("mosqueName"));
+            String address = cursor.getString(cursor.getColumnIndex("address"));
+            String timePrayer = cursor.getString(cursor.getColumnIndex("prayerTime"));
+            double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
+            double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
 
-                }while(cursor.moveToNext());
-            }
+            dataList.add(new Mosque(mosque_name, address, timePrayer, longitude, latitude));
         }
-        return new String[] {};
+//        cursor.close();
+//        db.close();
+        return dataList;
     }
 
     public boolean checkUserName(String username){

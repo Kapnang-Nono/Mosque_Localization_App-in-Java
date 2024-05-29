@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
      private EditText username, password;
      private Button signin, signup;
      private DatabaseHelper dbHelper;
+     private TextView errorEdittext;
 
 
     @Override
@@ -21,9 +23,12 @@ public class MainActivity extends Activity {
 
         username = (EditText) findViewById(R.id.user_name);
         password = (EditText) findViewById(R.id.user_password);
-        signin = (Button) findViewById(R.id.login_btn);
-        signup = (Button) findViewById(R.id.reg_btn);
+        signin =  findViewById(R.id.login);
+        signup = findViewById(R.id.signup);
+        errorEdittext = findViewById(R.id.error);
         dbHelper = new DatabaseHelper(this);
+
+        errorEdittext.setVisibility(View.GONE);
 
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +59,9 @@ public class MainActivity extends Activity {
                 Toast.makeText(this, "Login successfull", Toast.LENGTH_SHORT).show();
                 Intent myIntent = new Intent(this, Main.class);
                 startActivity(myIntent);
+
+                username.setText("");
+                password.setText("");
             }else{
                 Toast.makeText(this, "Invalid credentials! Try again", Toast.LENGTH_SHORT).show();
             }

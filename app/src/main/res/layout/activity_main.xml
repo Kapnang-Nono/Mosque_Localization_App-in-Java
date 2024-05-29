@@ -45,24 +45,24 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/login_btn"
+        android:id="@+id/login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="104dp"
         android:layout_marginTop="372dp"
         android:background="@color/purple_700"
         android:text="Login"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/signup_btn"
+        android:id="@+id/signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="224dp"
         android:layout_marginTop="372dp"
         android:background="@color/teal_200"
-        android:onClick="launchRegistrationActivity"
         android:text="Sign Up"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -72,6 +72,7 @@
         android:layout_width="wrap_content"
         android:layout_height="22dp"
         android:text="error-container"
+        android:color="@color/red"
         app:layout_constraintBottom_toBottomOf="@+id/login_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.523"
